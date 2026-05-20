@@ -14,11 +14,11 @@ export default function Certifications() {
           <div className="mt-4 h-1 w-20 mx-auto rounded-full bg-accent" />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
           {company.certifications.map((cert) => (
             <div
               key={cert.name}
-              className="bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-md transition-shadow w-[180px]"
             >
               <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-3">
                 <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
