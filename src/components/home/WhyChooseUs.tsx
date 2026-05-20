@@ -21,7 +21,7 @@ export default function WhyChooseUs() {
         </svg>
       ),
       title: 'International Certifications',
-      description: 'UL, ISO 9001/14001/45001, 3C, and Malaysia certified',
+      description: 'UL, ISO 9001/14001/45001, and 3C certified',
     },
     {
       icon: (

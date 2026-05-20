@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { company } from '@/data/company';
+import FactoryVideoPlayer from '@/components/factory/VideoPlayer';
 
 export const metadata: Metadata = {
   title: 'Factory',
@@ -61,15 +62,7 @@ export default function FactoryPage() {
 
           {/* Video Player */}
           <div className="max-w-5xl mx-auto">
-            <div className="relative aspect-video bg-primary-900 rounded-2xl overflow-hidden shadow-2xl">
-              <iframe
-                src="https://www.youtube.com/embed/VIDEO_ID?rel=0"
-                title="STS-SOLUTION Factory Tour"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full"
-              />
-            </div>
+            <FactoryVideoPlayer />
           </div>
         </div>
       </section>

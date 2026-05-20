@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Certifications',
-  description: `STS-SOLUTION holds ISO 9001, ISO 14001, ISO 45001, UL, 3C, and Malaysia certifications. Our products meet the highest international standards.`,
+  description: `STS-SOLUTION holds ISO 9001, ISO 14001, ISO 45001, UL, and 3C certifications. Our products meet the highest international standards.`,
 };
 
 export default function CertificationsPage() {
@@ -70,19 +70,6 @@ export default function CertificationsPage() {
         'National fire safety compliance',
         'Product quality assurance',
         'Regular factory inspections',
-      ],
-    },
-    {
-      name: 'Malaysia Certification',
-      fullName: 'Regional Market Access Certification',
-      description:
-        'Our Malaysia certification enables market access in Southeast Asia, one of our key target regions. This certification ensures our products meet local building codes and safety requirements.',
-      image: '/images/certifications/3c-cert.png',
-      highlights: [
-        'Southeast Asian market access',
-        'Local building code compliance',
-        'Regional safety standards met',
-        'Tropical climate performance verified',
       ],
     },
   ];

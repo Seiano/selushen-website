@@ -30,22 +30,11 @@ export default function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="flex flex-col">
-              <span
-                className={`font-heading text-2xl font-bold tracking-wider ${
-                  isScrolled ? 'text-primary' : 'text-white'
-                }`}
-              >
-                STS-SOLUTION
-              </span>
-              <span
-                className={`text-[10px] tracking-[0.3em] uppercase ${
-                  isScrolled ? 'text-accent' : 'text-accent'
-                }`}
-              >
-                Fire Door Manufacturer
-              </span>
-            </div>
+            <img
+              src={isScrolled ? '/images/logo.svg' : '/images/logo-white.svg'}
+              alt="STS-SOLUTION"
+              className="h-12 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}

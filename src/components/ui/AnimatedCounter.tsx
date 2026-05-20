@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+// Track which counters have already animated (persists across remounts within the same session)
+const animatedCounters = new Set<string>();
+
 interface AnimatedCounterProps {
   end: number;
   suffix?: string;
@@ -17,35 +20,54 @@ export default function AnimatedCounter({
   duration = 2000,
   label,
 }: AnimatedCounterProps) {
-  const [count, setCount] = useState(0);
+  // Use label+end as unique key to track animation state globally
+  const counterKey = `${label}-${end}`;
+  const alreadyAnimated = animatedCounters.has(counterKey);
+
+  const [count, setCount] = useState(alreadyAnimated ? end : 0);
   const ref = useRef<HTMLDivElement>(null);
-  const hasAnimated = useRef(false);
+  const rafId = useRef<number | null>(null);
 
   useEffect(() => {
+    // If already animated in a previous mount, show final value immediately
+    if (alreadyAnimated) {
+      setCount(end);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
+        if (entry.isIntersecting) {
+          animatedCounters.add(counterKey);
           const startTime = Date.now();
-          const animate = () => {
+          const step = () => {
             const elapsed = Date.now() - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            // Ease out cubic
             const eased = 1 - Math.pow(1 - progress, 3);
             setCount(Math.floor(eased * end));
             if (progress < 1) {
-              requestAnimationFrame(animate);
+              rafId.current = requestAnimationFrame(step);
+            } else {
+              setCount(end);
+              rafId.current = null;
             }
           };
-          requestAnimationFrame(animate);
+          rafId.current = requestAnimationFrame(step);
+          observer.disconnect();
         }
       },
       { threshold: 0.3 }
     );
 
     if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [end, duration]);
+    return () => {
+      observer.disconnect();
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+        rafId.current = null;
+      }
+    };
+  }, [end, duration, counterKey, alreadyAnimated]);
 
   return (
     <div ref={ref} className="text-center">

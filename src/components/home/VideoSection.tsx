@@ -1,9 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export default function VideoSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const handlePlay = () => {
+    setIsPlaying(true);
+    videoRef.current?.play();
+  };
+
+  const handlePause = () => {
+    setIsPlaying(false);
+  };
 
   return (
     <section className="section-padding bg-gray-50">
@@ -22,18 +32,25 @@ export default function VideoSection() {
         {/* Video Player */}
         <div className="max-w-5xl mx-auto">
           <div className="relative aspect-video bg-primary-900 rounded-2xl overflow-hidden shadow-2xl">
-            {isPlaying ? (
-              <iframe
-                src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&rel=0"
-                title="STS-SOLUTION Factory Tour"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full"
-              />
-            ) : (
+            {/* HTML5 Video */}
+            <video
+              ref={videoRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              controls={isPlaying}
+              preload="metadata"
+              poster="/images/hero/factory-hero.jpg"
+              onPause={handlePause}
+              onPlay={() => setIsPlaying(true)}
+            >
+              <source src="/videos/factory-tour.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+
+            {/* Play Overlay (shown when not playing) */}
+            {!isPlaying && (
               <div
-                className="absolute inset-0 cursor-pointer group"
-                onClick={() => setIsPlaying(true)}
+                className="absolute inset-0 cursor-pointer group z-10"
+                onClick={handlePlay}
               >
                 {/* Thumbnail */}
                 <div

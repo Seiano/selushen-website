@@ -70,17 +70,12 @@ export const company = {
       description: 'China Compulsory Product Certification',
       category: 'National',
     },
-    {
-      name: 'Malaysia Certification',
-      description: 'Regional Market Access Certification',
-      category: 'Regional',
-    },
   ],
   milestones: [
     { year: 'Founded', title: 'Company Established', description: 'Founded in Nanjing with a vision to provide world-class fire door solutions.' },
     { year: 'Growth', title: '58,000 sqm Facility', description: 'Expanded to a 58,000 sqm state-of-the-art manufacturing facility.' },
     { year: 'Expansion', title: '8 Branch Offices', description: 'Established branch offices across 8 major cities in China.' },
-    { year: 'Global', title: 'International Certifications', description: 'Achieved UL, ISO, and Malaysia certifications for global market access.' },
+    { year: 'Global', title: 'International Certifications', description: 'Achieved UL, ISO, and 3C certifications for global market access.' },
     { year: 'Today', title: 'Serving 50+ Countries', description: 'Exporting to Belt & Road countries across Middle East, Southeast Asia, Africa, and South Asia.' },
   ],
   productionCapabilities: [
