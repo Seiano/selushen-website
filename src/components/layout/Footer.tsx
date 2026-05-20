@@ -12,8 +12,11 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <div className="mb-4">
-              <h3 className="font-heading text-2xl font-bold tracking-wider">STS-SOLUTION</h3>
-              <p className="text-accent text-xs tracking-[0.2em] uppercase mt-1">Fire Door Manufacturer</p>
+              <img
+                src="/images/logo.png"
+                alt="STS-SOLUTION"
+                className="h-10 w-auto brightness-0 invert"
+              />
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
               {company.description.substring(0, 150)}...
