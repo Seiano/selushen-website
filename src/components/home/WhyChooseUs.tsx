@@ -47,6 +47,17 @@ export default function WhyChooseUs() {
   return (
     <section className="section-padding bg-primary">
       <div className="container mx-auto px-4">
+        {/* Section Title */}
+        <div className="text-center mb-12">
+          <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+            Why Choose Us
+          </h2>
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+            Backed by world-class manufacturing capabilities, international certifications, and comprehensive service coverage
+          </p>
+          <div className="mt-4 h-1 w-20 mx-auto rounded-full bg-accent" />
+        </div>
+
         {/* Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
           {company.stats.map((stat) => (

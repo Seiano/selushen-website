@@ -2,9 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-// Track which counters have already animated (persists across remounts within the same session)
-const animatedCounters = new Set<string>();
-
 interface AnimatedCounterProps {
   end: number;
   suffix?: string;
@@ -20,25 +17,20 @@ export default function AnimatedCounter({
   duration = 2000,
   label,
 }: AnimatedCounterProps) {
-  // Use label+end as unique key to track animation state globally
-  const counterKey = `${label}-${end}`;
-  const alreadyAnimated = animatedCounters.has(counterKey);
-
-  const [count, setCount] = useState(alreadyAnimated ? end : 0);
+  const [count, setCount] = useState(end);
   const ref = useRef<HTMLDivElement>(null);
+  const hasAnimated = useRef(false);
   const rafId = useRef<number | null>(null);
 
   useEffect(() => {
-    // If already animated in a previous mount, show final value immediately
-    if (alreadyAnimated) {
-      setCount(end);
-      return;
-    }
+    // If already animated, keep the final value
+    if (hasAnimated.current) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          animatedCounters.add(counterKey);
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true;
+          setCount(0); // Start from 0 for animation
           const startTime = Date.now();
           const step = () => {
             const elapsed = Date.now() - startTime;
@@ -67,7 +59,7 @@ export default function AnimatedCounter({
         rafId.current = null;
       }
     };
-  }, [end, duration, counterKey, alreadyAnimated]);
+  }, [end, duration]);
 
   return (
     <div ref={ref} className="text-center">
