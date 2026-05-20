@@ -1,0 +1,5 @@
+# STS-SOLUTION Website
+User-agent: *
+Allow: /
+
+Sitemap: https://sts-solution.com/sitemap.xml
