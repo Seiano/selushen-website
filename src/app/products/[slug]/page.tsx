@@ -47,12 +47,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Image */}
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100">
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                  backgroundImage: `url('${product.images[0] || '/images/products/placeholder.jpg'}')`,
-                }}
+            <div className="rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 p-4 flex items-center justify-center">
+              <img
+                src={product.images[0] || '/images/products/placeholder.jpg'}
+                alt={product.name}
+                className="w-full h-auto max-h-[600px] object-contain"
               />
             </div>
 
@@ -157,12 +156,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                     href={`/products/${rp.slug}`}
                     className="bg-gray-50 rounded-xl overflow-hidden hover:shadow-lg transition-shadow group"
                   >
-                    <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                      <div
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                        style={{
-                          backgroundImage: `url('${rp.images[0] || '/images/products/placeholder.jpg'}')`,
-                        }}
+                    <div className="relative aspect-[4/3] bg-gray-50 overflow-hidden flex items-center justify-center p-2">
+                      <img
+                        src={rp.images[0] || '/images/products/placeholder.jpg'}
+                        alt={rp.name}
+                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
                     <div className="p-4">

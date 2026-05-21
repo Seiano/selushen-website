@@ -101,10 +101,11 @@ export default function CertificationsPage() {
               >
                 {/* Image */}
                 <div className={`${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-50 shadow-lg">
-                    <div
-                      className="absolute inset-0 bg-cover bg-center"
-                      style={{ backgroundImage: `url('${cert.image}')` }}
+                  <div className="rounded-2xl overflow-hidden bg-gray-50 shadow-lg p-4 flex items-center justify-center min-h-[300px]">
+                    <img
+                      src={cert.image}
+                      alt={cert.name}
+                      className="w-full h-auto max-h-[500px] object-contain"
                     />
                   </div>
                 </div>
