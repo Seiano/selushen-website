@@ -4,6 +4,7 @@ import ProductCategories from '@/components/home/ProductCategories';
 import WhyChooseUs from '@/components/home/WhyChooseUs';
 import FactoryHighlights from '@/components/home/FactoryHighlights';
 import Certifications from '@/components/home/Certifications';
+import HonorsSection from '@/components/home/HonorsSection';
 import CTABanner from '@/components/home/CTABanner';
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       <WhyChooseUs />
       <FactoryHighlights />
       <Certifications />
+      <HonorsSection />
       <CTABanner />
     </>
   );
