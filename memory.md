@@ -30,6 +30,10 @@
 - 荣誉与展会板块：首页Certifications之后新增HonorsSection组件
 - 图片压缩优化：服务器端用ImageMagick批量压缩(mogrify -resize 1920x1080 -quality 80)，图片从602MB→25MB，已同步回本地项目(24.1MB)
 - 性能优化：开启HTTP/2(listen 443 ssl http2)，SSL session cache已配置(10m shared)，DNS缓存待自然建立
+- 视频播放重置Bug最终修复（2026-05-25）：根因是`onPause={()=>setIsPlaying(false)}`在缓冲暂停时触发poster覆盖层遮挡视频。最终方案：仅保留`onEnded`显示poster，`controls`始终显示，移除所有`onPause`/`onWaiting`/`onPlaying`/`isBuffering`事件，代码最简化。用户明确反馈"不要再压缩画质了"，视频保持31MB(935kbps+128kbps AAC)
+- Client-side exception错误修复（2026-05-25）：旧HTML文件引用已删除的旧JS chunk文件名（hash变化导致不匹配），全站所有页面报错。修复方案：全量重新部署所有HTML文件+整个_next目录（scp -r），所有页面恢复HTTP 200
+- 部署路径分隔符Bug（2026-05-25）：Python paramiko在Windows上`os.path.relpath`产生反斜杠，`.replace('\\','/')`未完全生效，导致服务器上生成`staticchunksappcontact`等错误目录名，_next目录被破坏。修复：改用`scp -r`命令上传整个_next目录
+- 浏览器缓存问题（2026-05-25）：用户本地浏览器缓存旧JS/HTML，导致点击视频播放无反应；朋友首次访问正常。用Ctrl+Shift+R强制刷新或无痕模式可解决
 
 # 关键决策
 
@@ -72,6 +76,9 @@
 - 已完成：修复Nginx try_files配置（SFTP写入时$uri变量被吞掉，改用SSH cat heredoc写入）
 - 已完成：域名sts-solutiondoors.com注册+DNS解析+SSL证书部署，https://sts-solutiondoors.com 可访问
 - 已完成：实名认证通过，clientHold/serverHold已解除
+- 已完成：视频播放重置Bug修复（简化事件处理，仅onEnded+手动play）
+- 已完成：Client-side exception全站报错修复（全量重新部署HTML+JS chunks）
+- 已完成：GitHub推送commit d2659d5（视频修复+图片压缩）
 - 待办：配置询盘表单后端（Formspree/Resend）
 - 待办：注册企业邮箱（当前info@sts-solution.com为占位）
 - 待办：从公司logo.doc提取正式logo替换SVG
@@ -86,10 +93,48 @@
 - 产品图片显示：`<img>`标签+`object-contain`替代`bg-cover`背景图，确保完整展示不裁剪
 - HonorsSection组件：荣誉图片+迪拜展会照片切换浏览器，useState控制activeExhibit索引
 - Python替代PowerShell：处理中文路径文件操作时，Python的shutil.copy2可正确处理UTF-8中文路径，PowerShell脚本文件的switch语句中文会编码损坏
+- VideoPlayer最终修复代码（VideoPlayer.tsx / VideoSection.tsx）：仅用`useState(true)`控制`showPoster`，`handlePlay`隐藏poster并调用`play()`，`handleEnded`显示poster，`controls`始终显示，`onPause`/`onWaiting`/`isBuffering`全部移除。避免缓冲时poster遮挡视频导致"回到开头"的假象
+- 全量重新部署命令：`scp -r out/_next root@8.215.84.0:/opt/selushen-website/` + 逐页上传HTML，避免Python paramiko路径分隔符Bug
+- Python路径分隔符Bug：Windows `os.path.relpath`产生`static\\chunks\\app\\...`，replace未完全生效，服务器生成`staticchunksappcontact`错误目录。必须用`scp -r`或确保replace彻底执行
 
 ---
 
 # 最近详细记忆区
+
+## 轮次 17 | 时间：2026-05-25 23:30 | 标签：#GitHub推送 #缓存清理 #memory更新
+
+**用户**: 不用修改Nginx了，用谷歌无痕浏览器测试完全没问题。现在服务上的代码跟本地的是同步的吧，如果是的话就上传GitHub，将这个版本进行一下保留。
+**AI**:
+1. 确认本地代码与服务器同步：上一轮全量重新部署后，out/_next和HTML文件均从本地构建产物上传
+2. git status检查：有76个文件未提交（图片压缩+VideoPlayer.tsx+VideoSection.tsx+memory.md）
+3. 排除无关文件：backup/目录和nul文件为本地生成，不加入提交
+4. git add添加src/components/factory/VideoPlayer.tsx、src/components/home/VideoSection.tsx、public/images/、memory.md
+5. git commit成功（d2659d5）："fix: video playback reset bug and compress images for performance"
+6. git push失败：代理127.0.0.1:7078未运行
+7. 使用`git -c http.proxy= -c https.proxy= push origin master`绕过代理推送成功
+8. 更新memory.md：核心记忆区追加视频最终修复、client-side exception修复、Python路径分隔符Bug；进度待办追加已完成项；代码片段追加VideoPlayer最终方案；最近详细记忆区追加本轮
+
+## 轮次 16 | 时间：2026-05-25 23:00 | 标签：#ClientSideException #全量重新部署 #路径分隔符Bug
+
+**用户**: 现在页面各个板块都显示正常了。但是我如何清除本地缓存，重新加载呢？我现在有个问题，我朋友那里看那个网站上的视频的时候没问题，我这看的时候点击播放没反应。
+**AI**:
+1. 判断为浏览器缓存问题：用户本地浏览器缓存了旧版本的JS/HTML（引用已删除的旧JS chunk或包含旧bug代码），朋友首次访问加载最新代码所以正常
+2. 提供三种清除缓存方法：Ctrl+Shift+R强制刷新、Ctrl+Shift+Delete清空全部缓存、F12开发者工具Disable cache
+3. 用户反馈：使用谷歌无痕浏览器测试完全没问题，确认是本地缓存问题
+4. 检查Git状态：本地与服务器的源码同步，无需额外修改
+
+## 轮次 15 | 时间：2026-05-25 22:00 | 标签：#ClientSideException #部署Bug #视频修复
+
+**用户**: 现在有个问题，就是点击产品那个里面的分类的产品的时候就报错。测试的人说其他的 about、Factory、Certifications、Contact也都报错，但是我这里没有报错。估计是我这的缓存的所以看不出那个报错。另外那个企业邮箱客户提供了两个，是不是只能有一个邮箱来接收客户的邮件啊？
+**AI**:
+1. 根因分析：上一轮部署时清理旧JS chunk文件，导致旧HTML文件引用了已删除的JS文件名（Next.js静态导出的chunk hash已变化）
+2. 用户确认：所有页面报错"Application error: a client-side exception has occurred"
+3. 用户要求：先解决bug，邮件配置稍后处理
+4. 全量重新部署：
+   - 使用`scp -r out/_next root@8.215.84.0:/opt/selushen-website/`上传整个_next目录
+   - 使用SCP逐页上传所有HTML文件（home/about/products/product-detail/factory/certifications/contact）
+   - 验证每个页面返回HTTP 200
+5. Python路径分隔符Bug教训：之前用Python paramiko上传时，Windows反斜杠路径未被完全替换，导致服务器上生成`staticchunksappcontact`等错误目录名，_next目录结构被破坏。必须用`scp -r`或彻底处理路径分隔符
 
 ## 轮次 14 | 时间：2026-05-25 21:00 | 标签：#视频播放 #前端Bug修复
 
