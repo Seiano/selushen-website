@@ -8,11 +8,15 @@ interface FactoryVideoPlayerProps {
 
 export default function FactoryVideoPlayer({ poster = '/images/hero/factory-hero.jpg' }: FactoryVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [showPoster, setShowPoster] = useState(true);
 
   const handlePlay = () => {
-    setIsPlaying(true);
+    setShowPoster(false);
     videoRef.current?.play();
+  };
+
+  const handleEnded = () => {
+    setShowPoster(true);
   };
 
   return (
@@ -20,17 +24,16 @@ export default function FactoryVideoPlayer({ poster = '/images/hero/factory-hero
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover"
-        controls={isPlaying}
+        controls
         preload="metadata"
         poster={poster}
-        onPause={() => setIsPlaying(false)}
-        onPlay={() => setIsPlaying(true)}
+        onEnded={handleEnded}
       >
         <source src="/videos/factory-tour.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
-      {!isPlaying && (
+      {showPoster && (
         <div
           className="absolute inset-0 cursor-pointer group z-10"
           onClick={handlePlay}
