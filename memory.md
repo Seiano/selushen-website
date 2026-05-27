@@ -83,7 +83,7 @@
   - 邮件服务路径：/opt/selushen-mail（ecosystem.config.js管理环境变量）
   - Nginx /api/contact 反向代理到 127.0.0.1:3001
   - SMTP发件账号：379992546@qq.com，授权码：hmnvyvpitqhjbghe
-  - 接收询盘邮箱（两个收件人）：marcmei@solutionnmt.com, 379992546@qq.com（yortongi@solutionnmt.com已移除）
+  - 接收询盘邮箱（两个收件人）：marcmei@solutionnmt.com, yortongi@solutionnmt.com（QQ邮箱379992546@qq.com已移除；注意yortongi曾退信，待确认地址有效性）
   - 页面左下角显示邮箱已改为 marcmei@solutionnmt.com（company.ts contact.email字段）
   - 前端contact页面已更新：loading状态+错误提示+WhatsApp fallback
 - 待办：从公司logo.doc提取正式logo替换SVG
