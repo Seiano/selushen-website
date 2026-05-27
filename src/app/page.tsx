@@ -11,12 +11,12 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <VideoSection />
       <ProductCategories />
       <WhyChooseUs />
-      <FactoryHighlights />
       <Certifications />
       <HonorsSection />
+      <FactoryHighlights />
+      <VideoSection />
       <CTABanner />
     </>
   );
