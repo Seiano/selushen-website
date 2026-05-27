@@ -1,0 +1,15 @@
+{
+  "name": "selushen-mail-server",
+  "version": "1.0.0",
+  "description": "QQ SMTP mail API for STS-SOLUTION website contact form",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "pm2": "pm2 start index.js --name selushen-mail"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.9"
+  }
+}

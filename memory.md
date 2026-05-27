@@ -19,11 +19,11 @@
 
 更新时间：2026-05-25 19:50
 
-- 静态导出方案（`output: 'export'`），部署CDN优化非洲/南亚慢网速体验
+- 询盘表单QQ SMTP方案（2026-05-27）：静态站无法用Next.js API Routes，改为独立Node.js邮件服务（Express+nodemailer）监听3001端口，Nginx反向代理/api/contact。PM2 ecosystem.config.js持久化环境变量（避免pm2直接启动env丢失的坑）。前端fetch /api/contact，成功显示感谢页，失败显示错误+WhatsApp fallback链接。
 - 视频使用HTML5 `<video>` 标签本地播放（压缩后27MB MP4，ffmpeg -crf 28 -maxrate 2M -movflags +faststart）
 - 数字滚动动效使用全局Set记录动画状态，防止页面切换后重置为0
 - Logo使用SVG格式（深蓝+金色），有深色/浅色两个版本
-- 询盘表单暂为前端演示，需接入Formspree/Resend实现邮件发送
+- 询盘表单已接入QQ SMTP（2026-05-27完成，见上方SMTP方案条目）
 - 产品分类按素材文件夹重建，3大类11款产品（原3大类16款产品有分类错误）
 - 认证/产品图片使用`object-contain`完整显示，不裁剪缩略
 - PowerShell中文路径编码问题：使用Python脚本替代PowerShell处理含中文的文件路径操作
@@ -79,8 +79,13 @@
 - 已完成：视频播放重置Bug修复（简化事件处理，仅onEnded+手动play）
 - 已完成：Client-side exception全站报错修复（全量重新部署HTML+JS chunks）
 - 已完成：GitHub推送commit d2659d5（视频修复+图片压缩）
-- 待办：配置询盘表单后端（Formspree/Resend）
-- 待办：注册企业邮箱（当前info@sts-solution.com为占位）
+- 已完成：询盘表单后端接入QQ SMTP（Node.js + nodemailer，PM2管理，2026-05-27）
+  - 邮件服务路径：/opt/selushen-mail（ecosystem.config.js管理环境变量）
+  - Nginx /api/contact 反向代理到 127.0.0.1:3001
+  - SMTP发件账号：379992546@qq.com，授权码：hmnvyvpitqhjbghe
+  - 接收询盘邮箱（两个收件人）：marcmei@solutionnmt.com, 379992546@qq.com（yortongi@solutionnmt.com已移除）
+  - 页面左下角显示邮箱已改为 marcmei@solutionnmt.com（company.ts contact.email字段）
+  - 前端contact页面已更新：loading状态+错误提示+WhatsApp fallback
 - 待办：从公司logo.doc提取正式logo替换SVG
 
 # 代码片段
@@ -100,6 +105,28 @@
 ---
 
 # 最近详细记忆区
+
+## 轮次 18 | 时间：2026-05-27 00:00:00 | 标签：#邮件配置 #SMTP #表单后端
+
+**用户**: 要用QQ邮箱的SMTP实现网站联系表单的邮件发送功能。QQ邮箱：379992546@qq.com，授权码：hmnvyvpitqhjbghe
+**AI**:
+1. 确认架构问题：Next.js静态导出（output: 'export'）无法使用API Routes，需要独立后端服务
+2. 选用方案：独立Node.js + Express + nodemailer服务，监听3001端口，Nginx反向代理/api/contact到该服务
+3. 创建 mail-server/index.js：Express服务，POST /api/contact端点，QQ SMTP 465端口SSL，HTML格式邮件，XSS防护（escapeHtml），CORS白名单（sts-solutiondoors.com + 8088端口）
+4. 创建 mail-server/package.json、.env.example
+5. 修改前端 src/app/contact/page.tsx：handleSubmit改为async fetch，添加isSubmitting/submitError状态，按钮loading状态，失败时显示错误+WhatsApp链接
+6. npm run build构建成功（21个静态页面）
+7. 服务器已有Node.js v24.13.0 + PM2 v6.0.14
+8. 上传 index.js + package.json 到 /opt/selushen-mail/
+9. 写入 .env 文件（pm2直接启动不读.env，踩坑）→ 改用 ecosystem.config.js 持久化环境变量
+10. npm install --production（71个包）
+11. 首次测试失败：SMTP user为空（.env不自动加载），日志报 "Missing credentials for PLAIN"
+12. 创建 ecosystem.config.js 写入env变量，pm2 start ecosystem.config.js，SMTP user正确加载
+13. Nginx配置：在443和8088两个server block均添加 location /api/contact { proxy_pass http://127.0.0.1:3001/api/contact; }
+14. 上传新构建的contact/index.html和_next目录到服务器
+15. 完整链路测试：curl POST https://sts-solutiondoors.com/api/contact → {"success":true,"message":"Inquiry sent successfully"}，邮件发送至379992546@qq.com成功
+
+**关键踩坑**：PM2直接启动（pm2 start index.js）不会读取同目录.env文件，必须用ecosystem.config.js的env字段或启动时内联环境变量。
 
 ## 轮次 17 | 时间：2026-05-25 23:30 | 标签：#GitHub推送 #缓存清理 #memory更新
 

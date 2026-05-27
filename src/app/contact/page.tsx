@@ -17,16 +17,35 @@ export default function ContactPage() {
     estimatedQuantity: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In production, this would send to a backend service
-    console.log('Form submitted:', formData);
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIsSubmitted(true);
+      } else {
+        setSubmitError(data.message || 'Submission failed. Please try WhatsApp instead.');
+      }
+    } catch {
+      setSubmitError('Network error. Please try WhatsApp instead.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -259,11 +278,26 @@ export default function ContactPage() {
                       />
                     </div>
 
+                    {submitError && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                        {submitError}
+                        <a
+                          href={WHATSAPP_LINK}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-2 underline font-semibold"
+                        >
+                          Chat on WhatsApp
+                        </a>
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      className="w-full bg-primary text-white py-4 rounded-lg font-heading font-semibold text-lg hover:bg-primary-600 transition-colors"
+                      disabled={isSubmitting}
+                      className="w-full bg-primary text-white py-4 rounded-lg font-heading font-semibold text-lg hover:bg-primary-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      Send Inquiry
+                      {isSubmitting ? 'Sending...' : 'Send Inquiry'}
                     </button>
                   </form>
                 )}

@@ -42,7 +42,7 @@ export const company = {
   contact: {
     whatsapp: '+86 15105150219',
     whatsappLink: 'https://wa.me/8615105150219?text=Hi%2C%20I%27m%20interested%20in%20your%20fire%20door%20products.%20Could%20you%20please%20send%20me%20more%20details%3F',
-    email: 'info@sts-solution.com',
+    email: 'marcmei@solutionnmt.com',
   },
   certifications: [
     {
